@@ -50,7 +50,7 @@ class RegisterForm extends React.Component {
     const {focusItem} = this.state
     return (
       <div className={this.props.className}>
-        <h3 className='title'>管理员注册</h3>
+        <h3 className='title'>用户注册</h3>
         <Form onSubmit={this.registerSubmit}>
           <Form.Item help={getFieldError('registerUsername') && <PromptBox info={getFieldError('registerUsername')}
                                                                            width={calculateWidth(getFieldError('registerUsername'))}/>}>
@@ -118,7 +118,7 @@ class RegisterForm extends React.Component {
           </div>
         </Form>
         <div className='footer'>
-          <div>欢迎登陆后台管理系统</div>
+          <div>欢迎登陆源链科技抽奖平台</div>
         </div>
       </div>
     )
