@@ -1,0 +1,54 @@
+server:
+  port: 8888
+#server:
+#  port: 8443
+#  ssl:
+#    key-store: config/sandc.xyz.jks
+#    key-store-password: fs5oals1eg86ax
+#    key-store-type: JKS
+logging:
+  level:
+    org.springframework:
+      data: DEBUG
+      security: DEBUG
+jwt:
+  claimKey:
+    username: "username"
+    authorities: "authorities"
+  secret: "wfhg9hr-1jfpjf-p3j-=vgf0pvmo3k=2-3rj0-3j=gn[=3-g[mj"
+  header: Authorization
+  tokenHead: "Bearer "
+oos:
+  accessKey: "c4582dec5d0809103126"
+  secretKey: "47c783687d4c452c5d71b817b8c481915fb0094a"
+  endPoint: "http://oos-bj2.ctyunapi.cn"
+  bucketName: "njutakeout"
+spring:
+  jpa:
+    database: mysql
+    properties:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/culterit?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  aop:
+    auto: true
+    proxy-target-class: false
+wechat:
+  url: https://api.weixin.qq.com/sns/jscode2session?appid=
+  order_url: https://api.mch.weixin.qq.com/pay/unifiedorder
+  id: wxcb12e68f4d6f36cf
+  secret: 19aa655730d152344ae62edae0a9e5e8
+  mch_id: 1511954771
+  body: 冉阔餐饮-九餐厅
+  device_info: WEB
+  notify_url: https://www.sandc.com
+  trade_type: JSAPI
+  api_key: Ccwk4VueI0EN3VMcFodm58XYsFSIRKHZ
+  sign_type: MD5
