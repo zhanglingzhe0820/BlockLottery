@@ -3,9 +3,18 @@ import CustomMenu from "../CustomMenu/index";
 
 const menus = [
   {
-    title: '首页',
+    title: '奖品管理',
     icon: 'home',
-    key: '/home'
+    key: '/home',
+  },
+  {
+    title: '活动管理',
+    icon: 'laptop',
+    key: '/home/event',
+    subs: [
+      {key: '/home/event/add', title: '新增活动', icon: '',},
+      {key: '/home/event/list', title: '活动列表', icon: '',},
+    ]
   },
   {
     title: '基本组件',
@@ -80,7 +89,7 @@ const menus = [
     ]
   },
   {
-    title: '关于',
+    title: '关于我们',
     icon: 'info-circle-o',
     key: '/home/about'
   }
