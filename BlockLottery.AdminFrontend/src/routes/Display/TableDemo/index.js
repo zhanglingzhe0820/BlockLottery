@@ -548,7 +548,7 @@ class TableDemo extends React.Component {
                  dataSource={this.state.data4}
                  pagination={this.state.pagination}
                  onChange={this.handleTableChange}
-                 columns={columns4} style={styles.tableStyle}/>u
+                 columns={columns4} style={styles.tableStyle}/>
         </Card>
         <Card bordered={false} title='可展开' style={{marginBottom: 10, minHeight: 440}} id='unfold'>
           <Table dataSource={data5} columns={columns5} style={styles.tableStyle}
