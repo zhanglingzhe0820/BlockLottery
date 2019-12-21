@@ -2,13 +2,14 @@ import React from 'react'
 import CustomBreadcrumb from "../../../components/CustomBreadcrumb";
 import TypingCard from "../../../components/TypingCard";
 import {Card, Divider, Icon, Table} from "antd";
+import {Link} from "react-router-dom";
 
 const columns = [
     {
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
-        render: text => <a>{text}</a>,
+        render: text => <Link to={'/home/event/detail/' + text}>{text}</Link>,
     }, {
         title: '活动名',
         dataIndex: 'name',

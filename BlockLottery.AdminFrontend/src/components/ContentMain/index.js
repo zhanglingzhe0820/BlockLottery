@@ -7,6 +7,7 @@ const Home = LoadableComponent(() => import('../../routes/Home/index'))  //å‚æ•
 
 const EventAddPage = LoadableComponent(() => import('../../routes/Event/AddPage'))
 const EventListPage = LoadableComponent(() => import('../../routes/Event/ListPage'))
+const EventDetailPage = LoadableComponent(() => import('../../routes/Event/DetailPage'))
 
 const GiftAddPage = LoadableComponent(() => import('../../routes/Gift/AddPage'))
 const GiftListPage = LoadableComponent(() => import('../../routes/Gift/ListPage'))
@@ -59,6 +60,7 @@ class ContentMain extends React.Component {
 
                     <PrivateRoute exact path='/home/event/add' component={EventAddPage}/>
                     <PrivateRoute exact path='/home/event/list' component={EventListPage}/>
+                    <PrivateRoute exact path='/home/event/detail/:id' component={EventDetailPage}/>
 
                     <PrivateRoute exact path='/home/gift/add' component={GiftAddPage}/>
                     <PrivateRoute exact path='/home/gift/list' component={GiftListPage}/>
