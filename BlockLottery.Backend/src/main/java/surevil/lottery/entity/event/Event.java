@@ -19,16 +19,16 @@ public class Event {
     @Column(name = "username")
     private String username;
     @Column(name = "rewardItemList")
-    @ElementCollection(targetClass = RewardItem.class)
-    private List<RewardItem> rewardItemList;
+    @ElementCollection(targetClass = Reward.class)
+    private List<Reward> rewardItemList;
     @Column(name = "peopleItems")
-    @ElementCollection(targetClass = PeopleItem.class)
-    private List<PeopleItem> peopleItems;
+    @ElementCollection(targetClass = EventPeople.class)
+    private List<EventPeople> peopleItems;
 
     public Event() {
     }
 
-    public Event(String name, String qrcodeUrl, String username, List<RewardItem> rewardItemList, List<PeopleItem> peopleItems) {
+    public Event(String name, String qrcodeUrl, String username, List<Reward> rewardItemList, List<EventPeople> peopleItems) {
         this.name = name;
         this.qrcodeUrl = qrcodeUrl;
         this.username = username;
@@ -68,19 +68,19 @@ public class Event {
         this.username = username;
     }
 
-    public List<RewardItem> getRewardItemList() {
+    public List<Reward> getRewardItemList() {
         return rewardItemList;
     }
 
-    public void setRewardItemList(List<RewardItem> rewardItemList) {
+    public void setRewardItemList(List<Reward> rewardItemList) {
         this.rewardItemList = rewardItemList;
     }
 
-    public List<PeopleItem> getPeopleItems() {
+    public List<EventPeople> getPeopleItems() {
         return peopleItems;
     }
 
-    public void setPeopleItems(List<PeopleItem> peopleItems) {
+    public void setPeopleItems(List<EventPeople> peopleItems) {
         this.peopleItems = peopleItems;
     }
 }

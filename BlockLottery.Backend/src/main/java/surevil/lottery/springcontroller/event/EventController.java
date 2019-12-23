@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import surevil.lottery.blservice.event.EventBlService;
 import surevil.lottery.entity.account.UserInfo;
+import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
 import surevil.lottery.response.Response;
 import surevil.lottery.response.SuccessResponse;
@@ -57,6 +58,11 @@ public class EventController {
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
     public ResponseEntity<Response> getEventDetail(@PathVariable(name = "id") int id) {
-        return new ResponseEntity<>(eventBlService.getEventDetail(id), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(eventBlService.getEventDetail(id), HttpStatus.OK);
+        } catch (ThingIdDoesNotExistException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getResponse(), HttpStatus.NOT_FOUND);
+        }
     }
 }

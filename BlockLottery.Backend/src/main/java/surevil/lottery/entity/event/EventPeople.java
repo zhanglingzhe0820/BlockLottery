@@ -11,17 +11,20 @@ public class EventPeople {
     private String name;
     @Column(name = "phone")
     private String phone;
-    @Column(name = "eventId")
-    private int eventId;
+    @Column(name = "timeStamp")
+    private long timeStamp;
+    @Column(name = "status")
+    private String status;
 
     public EventPeople() {
     }
 
-    public EventPeople(int code, String name, String phone, int eventId) {
+    public EventPeople(int code, String name, String phone, long timeStamp, String status) {
         this.code = code;
         this.name = name;
         this.phone = phone;
-        this.eventId = eventId;
+        this.timeStamp = timeStamp;
+        this.status = status;
     }
 
     public int getCode() {
@@ -48,11 +51,19 @@ public class EventPeople {
         this.phone = phone;
     }
 
-    public int getEventId() {
-        return eventId;
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -1,7 +1,7 @@
 package surevil.lottery.response.event;
 
 public class PeopleItem {
-    private String code;
+    private int code;
     private String name;
     private String phone;
     private long time;
@@ -10,7 +10,7 @@ public class PeopleItem {
     public PeopleItem() {
     }
 
-    public PeopleItem(String code, String name, String phone, long time, String status) {
+    public PeopleItem(int code, String name, String phone, long time, String status) {
         this.code = code;
         this.name = name;
         this.phone = phone;
@@ -18,11 +18,11 @@ public class PeopleItem {
         this.status = status;
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

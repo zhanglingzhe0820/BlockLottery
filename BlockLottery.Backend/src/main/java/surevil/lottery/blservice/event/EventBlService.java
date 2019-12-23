@@ -1,5 +1,6 @@
 package surevil.lottery.blservice.event;
 
+import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
 import surevil.lottery.response.SuccessResponse;
 import surevil.lottery.response.event.EventDetailResponse;
@@ -10,5 +11,5 @@ public interface EventBlService {
 
     EventLoadResponse loadEvents(String username);
 
-    EventDetailResponse getEventDetail(int id);
+    EventDetailResponse getEventDetail(int id) throws ThingIdDoesNotExistException;
 }
