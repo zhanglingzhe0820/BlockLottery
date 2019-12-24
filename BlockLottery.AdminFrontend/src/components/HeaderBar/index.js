@@ -3,10 +3,9 @@ import {Icon, Badge, Dropdown, Menu, Modal} from 'antd'
 import screenfull from 'screenfull'
 import {inject, observer} from 'mobx-react'
 import {Link, withRouter} from 'react-router-dom'
-import {isAuthenticated} from '../../utils/Session'
 
 //withRouter一定要写在前面，不然路由变化不会反映到props中去
-@withRouter @inject('appStore') @observer
+@withRouter
 class HeaderBar extends React.Component {
     state = {
         icon: 'arrows-alt',
@@ -36,13 +35,13 @@ class HeaderBar extends React.Component {
         }
     }
     logout = () => {
-        this.props.appStore.toggleLogin(false)
-        this.props.history.push(this.props.location.pathname)
+        localStorage.setItem("token", "")
+        this.props.history.push('/login')
     }
 
     render() {
-        const {icon, count, visible, avatar} = this.state
-        const {appStore, collapsed, location} = this.props
+        const {icon, visible, avatar} = this.state
+        const {collapsed, location} = this.props
         const notLogin = (
             <div>
                 <Link to={{pathname: '/login', state: {from: location}}}
@@ -52,7 +51,7 @@ class HeaderBar extends React.Component {
         )
         const menu = (
             <Menu className='menu'>
-              <Menu.Item><Link to={"/home/event/list"}>我的活动</Link></Menu.Item>
+                <Menu.Item><Link to={"/home/event/list"}>我的活动</Link></Menu.Item>
                 <Menu.Item><span onClick={this.logout}>退出登录</span></Menu.Item>
             </Menu>
         )
@@ -76,7 +75,7 @@ class HeaderBar extends React.Component {
                         {/*</li>*/}
                         <li><Icon style={{marginRight: -100}} type={icon} onClick={this.screenfullToggle}/></li>
                         <li>
-                            {appStore.isLogin ? login : notLogin}
+                            {!localStorage.getItem("token") || localStorage.getItem("token").length <= 0 ? notLogin : login}
                         </li>
                     </ul>
                 </div>

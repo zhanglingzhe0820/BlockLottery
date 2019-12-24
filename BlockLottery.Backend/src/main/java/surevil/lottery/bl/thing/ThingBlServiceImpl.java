@@ -38,7 +38,7 @@ public class ThingBlServiceImpl implements ThingBlService {
      */
     @Override
     public ThingAddResponse addThing(ThingAddParameters thingAddParameters, String supplierUsername) {
-        Thing thing = thingDao.save(new Thing(thingAddParameters.getName(), thingAddParameters.getUrl(), thingAddParameters.getPrice(), thingAddParameters.getDescription(), System.currentTimeMillis(), userDao.findUserByUsername(supplierUsername)));
+        Thing thing = thingDao.save(new Thing(thingAddParameters.getName(), thingAddParameters.getUrl(), thingAddParameters.getPrice(), thingAddParameters.getDescription(), System.currentTimeMillis(), userDao.findFirstByUsername(supplierUsername)));
         return new ThingAddResponse(thing.getId());
     }
 
@@ -75,7 +75,7 @@ public class ThingBlServiceImpl implements ThingBlService {
      */
     @Override
     public SuccessResponse updateUserThingById(ThingUpdateParameters thingUpdateParameters, String username) throws ThingIdDoesNotExistException {
-        Thing thing = new Thing(thingUpdateParameters.getName(), thingUpdateParameters.getUrl(), thingUpdateParameters.getPrice(), thingUpdateParameters.getDescription(), System.currentTimeMillis(), userDao.findUserByUsername(username));
+        Thing thing = new Thing(thingUpdateParameters.getName(), thingUpdateParameters.getUrl(), thingUpdateParameters.getPrice(), thingUpdateParameters.getDescription(), System.currentTimeMillis(), userDao.findFirstByUsername(username));
         thing.setId(thingUpdateParameters.getId());
         Thing savedThing = thingDao.save(thing);
         if (savedThing != null) {

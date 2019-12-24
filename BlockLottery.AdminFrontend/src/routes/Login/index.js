@@ -12,7 +12,7 @@ import RegisterForm from './RegisterForm'
 
 const url = 'https://github.com/zhangZhiHao1996/image-store/blob/master/react-admin-master/bg1.jpg?raw=true'
 
-@withRouter @inject('appStore') @observer
+@withRouter
 class Login extends React.Component {
     state = {
         showBox: 'login',   //展示当前表单
@@ -22,10 +22,9 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        const isLogin = this.props.appStore
+        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
         if (isLogin) {
             this.props.history.go(1)     //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
-            // this.props.appStore.toggleLogin(false) //也可以设置退出登录
         }
         this.initPage()
     }
@@ -40,7 +39,6 @@ class Login extends React.Component {
         this.setState({
             loading: true
         })
-        this.props.appStore.initUsers()
         this.loadImageAsync(url).then(url => {
             this.setState({
                 loading: false,

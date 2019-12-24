@@ -32,7 +32,7 @@ public class UserController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
     })
-    @RequestMapping(value = "account/login", method = RequestMethod.POST)
+    @RequestMapping(value = "account/login", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = UserLoginResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
@@ -57,7 +57,7 @@ public class UserController {
             @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
     })
-    @RequestMapping(value = "account/register", method = RequestMethod.POST)
+    @RequestMapping(value = "account/register", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = UserLoginResponse.class),
             @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),

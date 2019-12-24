@@ -69,7 +69,7 @@ public class UserBlServiceImpl implements UserBlService {
             throw new CannotRegisterException();
         }
         if (password.equals(USER_DEFAULT_PASSWORD)) {
-            if (userDao.findUserByUsername(username) == null) {
+            if (userDao.findFirstByUsername(username) == null) {
                 userDao.save(new User("", username, password, Role.getRole(role), "", new ArrayList<>()));
             }
             JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(username);
@@ -87,9 +87,9 @@ public class UserBlServiceImpl implements UserBlService {
     }
 
     private boolean confirmPassword(String username, String password) {
-        User user = userDao.findUserByUsername(username);
+        User user = userDao.findFirstByUsername(username);
         if (user != null) {
-            return BCrypt.checkpw(password, user.getPassword());
+            return password.equals(user.getPassword());
         } else {
             return false;
         }
@@ -156,7 +156,7 @@ public class UserBlServiceImpl implements UserBlService {
      */
     @Override
     public AvatarSaveResponse saveAvatar(String username, String avatarUrl) throws UsernameDoesNotFoundException {
-        User user = userDao.findUserByUsername(username);
+        User user = userDao.findFirstByUsername(username);
         if (user == null) {
             throw new UsernameDoesNotFoundException();
         } else {
@@ -168,7 +168,7 @@ public class UserBlServiceImpl implements UserBlService {
 
     @Override
     public UserInfoSaveResponse saveUserInfo(UserInfoSaveParameters userInfoSaveParameters, String username) throws UsernameDoesNotFoundException {
-        User user = userDao.findUserByUsername(username);
+        User user = userDao.findFirstByUsername(username);
         if (user == null) {
             throw new UsernameDoesNotFoundException();
         } else {
@@ -190,7 +190,7 @@ public class UserBlServiceImpl implements UserBlService {
 
     @Override
     public SuccessResponse saveUserBase(UserBaseSaveParameters userBaseSaveParameters, String username) throws UsernameDoesNotFoundException {
-        User user = userDao.findUserByUsername(username);
+        User user = userDao.findFirstByUsername(username);
         if (user == null) {
             throw new UsernameDoesNotFoundException();
         }
@@ -202,7 +202,7 @@ public class UserBlServiceImpl implements UserBlService {
 
     @Override
     public UserInfoGetResponse getUserInfo(String username) throws UsernameDoesNotFoundException {
-        User user = userDao.findUserByUsername(username);
+        User user = userDao.findFirstByUsername(username);
         if (user == null) {
             throw new UsernameDoesNotFoundException();
         } else {
@@ -213,7 +213,7 @@ public class UserBlServiceImpl implements UserBlService {
 
     @Override
     public UserRoleResponse getRole(String username) {
-        User user = userDao.findUserByUsername(username);
+        User user = userDao.findFirstByUsername(username);
         JwtUser jwtUser = (JwtUser) jwtUserDetailsService.loadUserByUsername(username);
         String token = jwtService.generateToken(jwtUser, EXPIRATION);
         return new UserRoleResponse(token, user.getRole());

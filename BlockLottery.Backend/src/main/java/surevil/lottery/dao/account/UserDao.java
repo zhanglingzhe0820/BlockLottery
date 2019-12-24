@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UserDao extends JpaRepository<User, String> {
-    User findUserByUsername(String username);
+    User findFirstByUsername(String username);
 
     List<User> findAllByRole(Role role);
 }

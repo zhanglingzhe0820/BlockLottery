@@ -1,10 +1,11 @@
 package surevil.lottery.response.event;
 
 import surevil.lottery.parameters.event.RewardItem;
+import surevil.lottery.response.Response;
 
 import java.util.List;
 
-public class EventDetailResponse {
+public class EventDetailResponse extends Response {
     private int id;
     private String name;
     private List<RewardItem> rewardItemList;
