@@ -56,7 +56,11 @@ public class EventBlServiceImpl implements EventBlService {
                     winners++;
                 }
             }
-            eventItems.add(new EventItem(event.getId(), event.getName(), event.getRewardItemList().size(), winners));
+            int rewardNum = 0;
+            for (Reward reward : event.getRewardItemList()) {
+                rewardNum += reward.getNum();
+            }
+            eventItems.add(new EventItem(event.getId(), event.getName(), rewardNum, winners));
         }
         return new EventLoadResponse(eventItems);
     }

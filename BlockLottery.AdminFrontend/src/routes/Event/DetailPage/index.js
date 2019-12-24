@@ -3,6 +3,7 @@ import {Card, Col, Row, BackTop, Button, Table} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 import {Link} from "react-router-dom";
+import {api} from "../../../services/api/ApiProvider";
 
 const columns = [
     {
@@ -69,6 +70,49 @@ class DetailPage extends React.Component {
             }
         ]
     };
+
+    componentDidMount = async () => {
+        this.setState({
+            isLoading: true
+        });
+        let eventId = this.props.match.params.id;
+        try {
+            let res = await api.eventService.getEventDetail(eventId);
+            let peoples = [];
+            for (let i = 0; i < res.peopleItems.length; i++) {
+                let peopleItem = res.peopleItems[i];
+                let people = {
+                    id: peopleItem.code,
+                    name: peopleItem.name,
+                    phone: peopleItem.phone,
+                    time: this.formatDate(peopleItem.time),
+                    status: peopleItem.status,
+                }
+                peoples = peoples.concat(people);
+            }
+            this.setState({
+                name: res.name,
+                rewards: res.rewardItemList,
+                qrcode: res.qrcodeUrl,
+                result: peoples
+            })
+        } catch (e) {
+            console.log(e)
+        }
+        this.setState({
+            isLoading: false
+        });
+    }
+
+    formatDate = (now) => {
+        const year = now.getYear();
+        const month = now.getMonth() + 1;
+        const date = now.getDate();
+        const hour = now.getHours();
+        const minute = now.getMinutes();
+        const second = now.getSeconds();
+        return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+    }
 
     getRewardInfo() {
         let rewardElements = [];

@@ -1,8 +1,9 @@
 import React from 'react'
 import CustomBreadcrumb from "../../../components/CustomBreadcrumb";
 import TypingCard from "../../../components/TypingCard";
-import {Card, Divider, Icon, Table} from "antd";
+import {Card, Table} from "antd";
 import {Link} from "react-router-dom";
+import {api} from '../../../services/api/ApiProvider'
 
 const columns = [
     {
@@ -16,12 +17,12 @@ const columns = [
         key: 'name',
     }, {
         title: '总奖数',
-        dataIndex: 'rewardNum',
-        key: 'rewardNum',
+        dataIndex: 'numOfRewards',
+        key: 'numOfRewards',
     }, {
         title: '获奖人数',
-        dataIndex: 'peopleNum',
-        key: 'peopleNum',
+        dataIndex: 'numOfWinner',
+        key: 'numOfWinner',
     }];
 
 class ListPage extends React.Component {
@@ -30,23 +31,18 @@ class ListPage extends React.Component {
         pagination: {
             pageSize: 8
         },
-        data: [
-            {
-                id: '1',
-                name: '2020年会活动',
-                rewardNum: 14,
-                peopleNum: 12,
-            }, {
-                id: '2',
-                name: '2019年会活动',
-                rewardNum: 14,
-                peopleNum: 14,
-            }, {
-                id: '3',
-                name: '2018年会活动',
-                rewardNum: 14,
-                peopleNum: 10,
-            }],
+        data: [],
+    }
+
+    componentDidMount = async () => {
+        try {
+            let res = await api.eventService.loadEvents()
+            this.setState({
+                data: res.eventItems
+            })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     render() {

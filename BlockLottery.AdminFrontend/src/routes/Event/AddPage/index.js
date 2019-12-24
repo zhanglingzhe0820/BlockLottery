@@ -2,6 +2,7 @@ import React from 'react'
 import {Card, Form, Checkbox, Input, Button, Col, Row, message, BackTop} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
+import {api} from "../../../services/api/ApiProvider";
 
 const FormItem = Form.Item
 
@@ -11,14 +12,34 @@ class AddPage extends React.Component {
         disabled: false,
         rewardCount: 1,
     }
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
+        this.props.form.validateFieldsAndScroll(async (err, values) => {
             if (err) {
                 message.warning('请先填写正确的表单')
             } else {
-                message.success('提交成功')
-                // console.log(values)
+                try {
+                    let rewardItems = [];
+                    for (let i = 0; i < this.state.rewardCount; i++) {
+                        let reward = {
+                            level: values[`rewardLevel-${i}`],
+                            name: values[`rewardName-${i}`],
+                            num: values[`rewardNum-${i}`],
+                            count: values[`timeCount-${i}`]
+                        };
+                        rewardItems = rewardItems.concat(reward);
+                    }
+                    await api.eventService.addEvent(
+                        {
+                            id: 0,
+                            name: values.name,
+                            rewardItems: rewardItems
+                        }
+                    );
+                    message.success('提交成功')
+                } catch (e) {
+                    message.success('提交失败，请重试')
+                }
             }
         });
     };
@@ -44,11 +65,11 @@ class AddPage extends React.Component {
                 sm: {span: 16},
             },
         };
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < count; i++) {
             children.push(
                 <div>
                     <Row gutter={24}>
-                        <Col span={12} key={i} style={{display: i < count ? 'block' : 'none'}}>
+                        <Col span={12} key={i}>
                             <FormItem label='奖项名称' {...formItemLayout}>
                                 {
                                     getFieldDecorator(`rewardLevel-${i}`, {

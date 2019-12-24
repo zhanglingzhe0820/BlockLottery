@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import surevil.lottery.blservice.event.EventBlService;
-import surevil.lottery.entity.account.UserInfo;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
 import surevil.lottery.response.Response;
@@ -16,7 +15,6 @@ import surevil.lottery.response.SuccessResponse;
 import surevil.lottery.response.WrongResponse;
 import surevil.lottery.response.event.EventDetailResponse;
 import surevil.lottery.response.event.EventLoadResponse;
-import surevil.lottery.response.thing.ThingLoadResponse;
 import surevil.lottery.util.UserInfoUtil;
 
 @RestController
