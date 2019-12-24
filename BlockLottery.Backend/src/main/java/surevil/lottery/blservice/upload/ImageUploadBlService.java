@@ -22,4 +22,6 @@ public interface ImageUploadBlService {
      * @return the url of the image
      */
     UploadImageResponse uploadFiles(int thingId, MultipartFile multipartFile) throws SystemException, ThingIdDoesNotExistException;
+
+    UploadImageResponse uploadFiles(String path) throws SystemException;
 }

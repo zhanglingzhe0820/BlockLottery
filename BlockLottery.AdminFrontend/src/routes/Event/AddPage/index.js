@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, Form, Checkbox, Input, Button, Col, Row, message, BackTop} from 'antd'
+import {Card, Form, Checkbox, Input, Button, Col, Row, message, BackTop, Spin} from 'antd'
 import CustomBreadcrumb from '../../../components/CustomBreadcrumb/index'
 import TypingCard from '../../../components/TypingCard'
 import {api} from "../../../services/api/ApiProvider";
@@ -11,6 +11,7 @@ class AddPage extends React.Component {
     state = {
         disabled: false,
         rewardCount: 1,
+        loading: false,
     }
     handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,6 +19,9 @@ class AddPage extends React.Component {
             if (err) {
                 message.warning('请先填写正确的表单')
             } else {
+                this.setState({
+                    loading: true
+                });
                 try {
                     let rewardItems = [];
                     for (let i = 0; i < this.state.rewardCount; i++) {
@@ -37,9 +41,13 @@ class AddPage extends React.Component {
                         }
                     );
                     message.success('提交成功')
+                    this.props.history.push("/home/event/list")
                 } catch (e) {
                     message.success('提交失败，请重试')
                 }
+                this.setState({
+                    loading: false
+                });
             }
         });
     };
@@ -159,7 +167,7 @@ class AddPage extends React.Component {
         };
         const cardContent = '新增后数据将上链无法修改活动内容，请谨慎输入~';
         return (
-            <div>
+            <Spin spinning={this.state.loading} delay={500}>
                 <CustomBreadcrumb arr={['活动', '新增']}/>
                 <TypingCard title={"友情提示"} source={cardContent}/>
                 <Card bordered={false} title='新增活动'>
@@ -195,7 +203,7 @@ class AddPage extends React.Component {
                     </Form>
                 </Card>
                 <BackTop visibilityHeight={200} style={{right: 50}}/>
-            </div>
+            </Spin>
         )
     }
 }

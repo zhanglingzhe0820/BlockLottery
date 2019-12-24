@@ -73,7 +73,7 @@ class DetailPage extends React.Component {
 
     componentDidMount = async () => {
         this.setState({
-            isLoading: true
+            loading: true
         });
         let eventId = this.props.match.params.id;
         try {
@@ -100,7 +100,7 @@ class DetailPage extends React.Component {
             console.log(e)
         }
         this.setState({
-            isLoading: false
+            loading: false
         });
     }
 

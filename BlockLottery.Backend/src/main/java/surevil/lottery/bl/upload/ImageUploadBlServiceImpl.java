@@ -73,6 +73,32 @@ public class ImageUploadBlServiceImpl implements ImageUploadBlService {
         }
     }
 
+    @Override
+    public UploadImageResponse uploadFiles(String path) throws SystemException {
+        String url = uploadImage(generateImageKey(), path);
+        return new UploadImageResponse(url);
+    }
+
+    private String uploadImage(String key, String path) throws SystemException {
+        try {
+            //上传图片
+            AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+            AmazonS3 oos = new AmazonS3Client(credentials);
+            oos.setEndpoint(endPoint);
+            oos.putObject(bucketName, key, new File(path));
+
+            //生成共享地址
+            GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                    new GeneratePresignedUrlRequest(bucketName, key);
+            generatePresignedUrlRequest.setExpiration(new Date(EXPIRATION));
+            URL url = oos.generatePresignedUrl(generatePresignedUrlRequest);
+            return url.toURI().toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SystemException();
+        }
+    }
+
     private String generateImageKey(int thingId) {
         return "thing_" + thingId;
     }
@@ -132,15 +158,4 @@ public class ImageUploadBlServiceImpl implements ImageUploadBlService {
         }
     }
 
-    /**
-     * delete the image
-     *
-     * @param key the id of the image
-     */
-    private void deleteImage(String key) {
-        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-        AmazonS3 oos = new AmazonS3Client(credentials);
-        oos.setEndpoint(endPoint);
-        oos.deleteObject(bucketName, key);
-    }
 }

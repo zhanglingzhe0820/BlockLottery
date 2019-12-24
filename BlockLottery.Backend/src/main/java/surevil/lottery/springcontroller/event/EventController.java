@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import surevil.lottery.blservice.event.EventBlService;
+import surevil.lottery.exception.SystemException;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
 import surevil.lottery.response.Response;
@@ -34,7 +35,12 @@ public class EventController {
             @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
     @ResponseBody
     public ResponseEntity<Response> addEvent(@RequestBody EventAddParameters eventAddParameters) {
-        return new ResponseEntity<>(eventBlService.addEvent(eventAddParameters), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(eventBlService.addEvent(eventAddParameters), HttpStatus.OK);
+        } catch (SystemException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @ApiOperation(value = "获得活动", notes = "获得活动列表")

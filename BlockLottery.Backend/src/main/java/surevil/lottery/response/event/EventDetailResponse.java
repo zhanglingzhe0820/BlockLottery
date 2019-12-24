@@ -10,16 +10,18 @@ public class EventDetailResponse extends Response {
     private String name;
     private List<RewardItem> rewardItemList;
     private String qrcodeUrl;
+    private String lotteryUrl;
     private List<PeopleItem> peopleItems;
 
     public EventDetailResponse() {
     }
 
-    public EventDetailResponse(int id, String name, List<RewardItem> rewardItemList, String qrcodeUrl, List<PeopleItem> peopleItems) {
+    public EventDetailResponse(int id, String name, List<RewardItem> rewardItemList, String qrcodeUrl, String lotteryUrl, List<PeopleItem> peopleItems) {
         this.id = id;
         this.name = name;
         this.rewardItemList = rewardItemList;
         this.qrcodeUrl = qrcodeUrl;
+        this.lotteryUrl = lotteryUrl;
         this.peopleItems = peopleItems;
     }
 
@@ -45,6 +47,14 @@ public class EventDetailResponse extends Response {
 
     public void setRewardItemList(List<RewardItem> rewardItemList) {
         this.rewardItemList = rewardItemList;
+    }
+
+    public String getLotteryUrl() {
+        return lotteryUrl;
+    }
+
+    public void setLotteryUrl(String lotteryUrl) {
+        this.lotteryUrl = lotteryUrl;
     }
 
     public String getQrcodeUrl() {
