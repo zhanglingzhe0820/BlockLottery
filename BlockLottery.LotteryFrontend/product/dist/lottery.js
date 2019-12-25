@@ -543,6 +543,7 @@ __webpack_require__(8);
 
 var _prizeList = __webpack_require__(9);
 
+var BACKEND_URL = "http://localhost:8888/";
 var ROTATE_TIME = 3000;
 var BASE_HEIGHT = 1080;
 
@@ -591,25 +592,53 @@ isLotting = false,
 
 initAll();
 
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+            return pair[1];
+        }
+    }
+    return 17;
+}
+
 /**
  * 初始化所有DOM
  */
 function initAll() {
+    var eventId = getQueryVariable("eventId");
     window.AJAX({
-        url: '/getTempData',
+        url: 'getTempData',
         success: function success(data) {
+            console.log(data);
+            var prizes = [];
+            var eachCount = [];
+            for (var i = 0; i < data.rewardItemList.length(); i++) {
+                var rewardItem = data.rewardItemList[i];
+                var prize = {
+                    type: i,
+                    count: rewardItem.num,
+                    title: rewardItem.name,
+                    img: '../img/huawei.png'
+                };
+                prizes = prizes.concat(prize);
+                eachCount = eachCount.concat(rewardItem.count);
+            }
             // 获取基础数据
-            prizes = data.cfgData.prizes;
-            EACH_COUNT = data.cfgData.EACH_COUNT;
+            EACH_COUNT = eachCount;
             ROW_COUNT = data.cfgData.ROW_COUNT;
             COLUMN_COUNT = data.cfgData.COLUMN_COUNT;
-            COMPANY = data.cfgData.COMPANY;
+            COMPANY = data.name;
             HIGHLIGHT_CELL = data.cfgData.HIGHLIGHT_CELL;
             basicData.prizes = prizes;
             (0, _prizeList.setPrizes)(prizes);
 
             TOTAL_CARDS = ROW_COUNT * COLUMN_COUNT;
 
+            console.log(data.leftUsers);
+            console.log(data.luckyData);
             // 读取当前已设置的抽奖结果
             basicData.leftUsers = data.leftUsers;
             basicData.luckyUsers = data.luckyData;

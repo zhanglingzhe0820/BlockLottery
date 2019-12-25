@@ -9,6 +9,7 @@ import {
     resetPrize
 } from './prizeList';
 
+const BACKEND_URL = "http://localhost:8888/";
 const ROTATE_TIME = 3000;
 const BASE_HEIGHT = 1080;
 
@@ -51,27 +52,61 @@ let selectedCardIndex = [],
 
 initAll();
 
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+            return pair[1];
+        }
+    }
+    return 17;
+}
+
 /**
  * 初始化所有DOM
  */
 function initAll() {
+    let eventId = getQueryVariable("eventId");
     window.AJAX({
-        url: '/getTempData',
+        url: 'getTempData',
         success(data) {
+            let prizes = [];
+            let eachCount = [];
+            for (let i = 0; i < data.rewardItemList.length(); i++) {
+                let rewardItem = data.rewardItemList[i];
+                let prize = {
+                    type: i,
+                    count: rewardItem.num,
+                    title: rewardItem.name,
+                    img: '../img/huawei.png'
+                };
+                prizes = prizes.concat(prize);
+                eachCount = eachCount.concat(rewardItem.count);
+            }
             // 获取基础数据
-            prizes = data.cfgData.prizes;
-            EACH_COUNT = data.cfgData.EACH_COUNT;
+            EACH_COUNT = eachCount;
             ROW_COUNT = data.cfgData.ROW_COUNT;
             COLUMN_COUNT = data.cfgData.COLUMN_COUNT;
-            COMPANY = data.cfgData.COMPANY;
+            COMPANY = data.name;
             HIGHLIGHT_CELL = data.cfgData.HIGHLIGHT_CELL;
             basicData.prizes = prizes;
             setPrizes(prizes);
 
             TOTAL_CARDS = ROW_COUNT * COLUMN_COUNT;
 
+            let leftUsers = [];
+            for (let i = 0; i < data.peopleItems.length; i++) {
+                let peopleItem = data.peopleItems;
+                let user = [peopleItem.code, peopleItem.name, peopleItem.phone.substr(peopleItem.phone.length - 6)];
+                leftUsers = leftUsers.concat(user);
+            }
+
+            let luckyData = [];
+            console.log(data.luckyData)
             // 读取当前已设置的抽奖结果
-            basicData.leftUsers = data.leftUsers;
+            basicData.users = data.leftUsers;
             basicData.luckyUsers = data.luckyData;
 
             let prizeIndex = basicData.prizes.length - 1;
@@ -90,17 +125,10 @@ function initAll() {
         }
     });
 
-    window.AJAX({
-        url: '/getUsers',
-        success(data) {
-            basicData.users = data;
-
-            initCards();
-            // startMaoPao();
-            animate();
-            shineCard();
-        }
-    });
+    initCards();
+    // startMaoPao();
+    animate();
+    shineCard();
 }
 
 function initCards() {
@@ -201,7 +229,7 @@ function bindEvent() {
                 switchScreen('enter');
                 rotate = false;
                 break;
-                // 进入抽奖
+            // 进入抽奖
             case 'enter':
                 removeHighlight();
                 addQipao(`马上抽取[${currentPrize.title}],不要走开。`);
@@ -209,7 +237,7 @@ function bindEvent() {
                 rotate = true;
                 switchScreen('lottery');
                 break;
-                // 重置
+            // 重置
             case 'reset':
                 let doREset = window.confirm('是否确认重置数据，重置后，当前已抽的奖项全部清空？')
                 if (!doREset) {
@@ -229,7 +257,7 @@ function bindEvent() {
                 reset();
                 switchScreen('enter');
                 break;
-                // 抽奖
+            // 抽奖
             case 'lottery':
                 setLotteryStatus(true);
                 // 每次抽奖前先保存上一次的抽奖数据
@@ -242,7 +270,7 @@ function bindEvent() {
                 });
                 addQipao(`正在抽取[${currentPrize.title}],调整好姿势`);
                 break;
-                // 重新抽奖
+            // 重新抽奖
             case 'reLottery':
                 if (currentLuckys.length === 0) {
                     addQipao(`当前还没有抽奖，无法重新抽取喔~~`);
@@ -258,7 +286,7 @@ function bindEvent() {
                     lottery();
                 });
                 break;
-                // 导出抽奖结果
+            // 导出抽奖结果
             case 'save':
                 saveData().then(res => {
                     resetCard().then(res => {
@@ -695,7 +723,6 @@ window.onload = function () {
     onload && onload();
 
     let music = document.querySelector('#music');
-
 
 
     let rotated = 0,

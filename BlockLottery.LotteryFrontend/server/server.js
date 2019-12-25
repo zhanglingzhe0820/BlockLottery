@@ -55,6 +55,7 @@ router.post('/getTempData', (req, res, next) => {
         leftUsers: curData.leftUsers,
         luckyData: luckyData
     })
+    console.log(res)
 });
 
 // 获取所有用户
@@ -67,18 +68,21 @@ router.post('/reset', (req, res, next) => {
         res.json({
             type: 'success'
         });
+        console.log(res)
     });
 });
 
 // 获取所有用户
 router.post('/getUsers', (req, res, next) => {
     res.json(curData.users);
+    console.log(res)
     log(`成功返回抽奖用户数据`);
 });
 
 // 获取奖品信息
 router.post('/getPrizes', (req, res, next) => {
-    // res.json(curData.prize);
+    res.json(curData.prize);
+    console.log(res)
     log(`成功返回奖品数据`);
 });
 
@@ -89,6 +93,7 @@ router.post('/saveData', (req, res, next) => {
         res.json({
             type: '设置成功！'
         });
+        console.log(res)
         log(`保存奖品数据成功`);
     }).catch(res => {
         res.json({
@@ -105,6 +110,7 @@ router.post('/errorData', (req, res, next) => {
         res.json({
             type: '设置成功！'
         });
+        console.log(res)
         log(`保存没来人员数据成功`);
     }).catch(res => {
         res.json({
