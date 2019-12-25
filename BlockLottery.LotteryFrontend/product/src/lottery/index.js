@@ -12,6 +12,14 @@ import {
 const BACKEND_URL = "http://localhost:8888/";
 const ROTATE_TIME = 3000;
 const BASE_HEIGHT = 1080;
+const ROW_COUNT = 7;
+const COLUMN_COUNT = 17;
+
+
+/**
+ * 高亮矩阵
+ */
+const HIGHLIGHT_CELL = ['1-1', '1-2', '1-3', '2-3', '3-1', '3-2', '3-3', '4-1', '5-1', '5-2', '5-3', '1-5', '1-6', '1-7', '2-5', '2-7', '3-5', '3-7', '4-5', '4-7', '5-5', '5-6', '5-7', '1-10', '2-9', '2-10', '3-10', '4-10', '5-9', '5-10', '5-11', '1-13', '1-14', '1-15', '2-13', '2-15', '3-13', '3-14', '3-15', '4-15', '5-13', '5-14', '5-15'];
 
 let
     TOTAL_CARDS,
@@ -21,10 +29,7 @@ let
     },
     prizes,
     EACH_COUNT,
-    ROW_COUNT,
-    COLUMN_COUNT,
     COMPANY,
-    HIGHLIGHT_CELL,
     // 当前的比例
     Resolution = 1;
 
@@ -70,14 +75,14 @@ function getQueryVariable(variable) {
 function initAll() {
     let eventId = getQueryVariable("eventId");
     window.AJAX({
-        url: 'getTempData',
+        url: BACKEND_URL + 'event/' + eventId,
         success(data) {
             let prizes = [];
             let eachCount = [];
-            for (let i = 0; i < data.rewardItemList.length(); i++) {
+            for (let i = 0; i < data.rewardItemList.length; i++) {
                 let rewardItem = data.rewardItemList[i];
                 let prize = {
-                    type: i,
+                    type: rewardItem.level,
                     count: rewardItem.num,
                     title: rewardItem.name,
                     img: '../img/huawei.png'
@@ -87,10 +92,7 @@ function initAll() {
             }
             // 获取基础数据
             EACH_COUNT = eachCount;
-            ROW_COUNT = data.cfgData.ROW_COUNT;
-            COLUMN_COUNT = data.cfgData.COLUMN_COUNT;
             COMPANY = data.name;
-            HIGHLIGHT_CELL = data.cfgData.HIGHLIGHT_CELL;
             basicData.prizes = prizes;
             setPrizes(prizes);
 
@@ -98,13 +100,11 @@ function initAll() {
 
             let leftUsers = [];
             for (let i = 0; i < data.peopleItems.length; i++) {
-                let peopleItem = data.peopleItems;
+                let peopleItem = data.peopleItems[i];
                 let user = [peopleItem.code, peopleItem.name, peopleItem.phone.substr(peopleItem.phone.length - 6)];
                 leftUsers = leftUsers.concat(user);
             }
 
-            let luckyData = [];
-            console.log(data.luckyData)
             // 读取当前已设置的抽奖结果
             basicData.users = data.leftUsers;
             basicData.luckyUsers = data.luckyData;

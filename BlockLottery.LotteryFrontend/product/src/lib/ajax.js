@@ -1,6 +1,6 @@
 window.AJAX = function (opt) {
     opt = Object.assign({}, {
-        type: 'POST',
+        type: 'GET',
         async: true,
         isJson: true
     }, opt || {});

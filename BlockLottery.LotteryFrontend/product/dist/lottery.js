@@ -546,6 +546,13 @@ var _prizeList = __webpack_require__(9);
 var BACKEND_URL = "http://localhost:8888/";
 var ROTATE_TIME = 3000;
 var BASE_HEIGHT = 1080;
+var ROW_COUNT = 7;
+var COLUMN_COUNT = 17;
+
+/**
+ * 高亮矩阵
+ */
+var HIGHLIGHT_CELL = ['1-1', '1-2', '1-3', '2-3', '3-1', '3-2', '3-3', '4-1', '5-1', '5-2', '5-3', '1-5', '1-6', '1-7', '2-5', '2-7', '3-5', '3-7', '4-5', '4-7', '5-5', '5-6', '5-7', '1-10', '2-9', '2-10', '3-10', '4-10', '5-9', '5-10', '5-11', '1-13', '1-14', '1-15', '2-13', '2-15', '3-13', '3-14', '3-15', '4-15', '5-13', '5-14', '5-15'];
 
 var TOTAL_CARDS = void 0,
     btns = {
@@ -554,10 +561,7 @@ var TOTAL_CARDS = void 0,
 },
     prizes = void 0,
     EACH_COUNT = void 0,
-    ROW_COUNT = void 0,
-    COLUMN_COUNT = void 0,
     COMPANY = void 0,
-    HIGHLIGHT_CELL = void 0,
 
 // 当前的比例
 Resolution = 1;
@@ -610,15 +614,14 @@ function getQueryVariable(variable) {
 function initAll() {
     var eventId = getQueryVariable("eventId");
     window.AJAX({
-        url: 'getTempData',
+        url: BACKEND_URL + 'event/' + eventId,
         success: function success(data) {
-            console.log(data);
             var prizes = [];
             var eachCount = [];
-            for (var i = 0; i < data.rewardItemList.length(); i++) {
+            for (var i = 0; i < data.rewardItemList.length; i++) {
                 var rewardItem = data.rewardItemList[i];
                 var prize = {
-                    type: i,
+                    type: rewardItem.level,
                     count: rewardItem.num,
                     title: rewardItem.name,
                     img: '../img/huawei.png'
@@ -628,19 +631,21 @@ function initAll() {
             }
             // 获取基础数据
             EACH_COUNT = eachCount;
-            ROW_COUNT = data.cfgData.ROW_COUNT;
-            COLUMN_COUNT = data.cfgData.COLUMN_COUNT;
             COMPANY = data.name;
-            HIGHLIGHT_CELL = data.cfgData.HIGHLIGHT_CELL;
             basicData.prizes = prizes;
             (0, _prizeList.setPrizes)(prizes);
 
             TOTAL_CARDS = ROW_COUNT * COLUMN_COUNT;
 
-            console.log(data.leftUsers);
-            console.log(data.luckyData);
+            var leftUsers = [];
+            for (var _i = 0; _i < data.peopleItems.length; _i++) {
+                var peopleItem = data.peopleItems[_i];
+                var user = [peopleItem.code, peopleItem.name, peopleItem.phone.substr(peopleItem.phone.length - 6)];
+                leftUsers = leftUsers.concat(user);
+            }
+
             // 读取当前已设置的抽奖结果
-            basicData.leftUsers = data.leftUsers;
+            basicData.users = data.leftUsers;
             basicData.luckyUsers = data.luckyData;
 
             var prizeIndex = basicData.prizes.length - 1;
@@ -659,17 +664,10 @@ function initAll() {
         }
     });
 
-    window.AJAX({
-        url: '/getUsers',
-        success: function success(data) {
-            basicData.users = data;
-
-            initCards();
-            // startMaoPao();
-            animate();
-            shineCard();
-        }
-    });
+    initCards();
+    // startMaoPao();
+    animate();
+    shineCard();
 }
 
 function initCards() {
@@ -691,9 +689,9 @@ function initCards() {
 
     scene = new THREE.Scene();
 
-    for (var _i = 0; _i < ROW_COUNT; _i++) {
+    for (var _i2 = 0; _i2 < ROW_COUNT; _i2++) {
         for (var j = 0; j < COLUMN_COUNT; j++) {
-            isBold = HIGHLIGHT_CELL.includes(_i + '-' + j);
+            isBold = HIGHLIGHT_CELL.includes(_i2 + '-' + j);
             var element = createCard(member[index % length], isBold, index, showTable);
 
             var object = new THREE.CSS3DObject(element);
@@ -706,7 +704,7 @@ function initCards() {
 
             var object = new THREE.Object3D();
             object.position.x = j * 140 - position.x;
-            object.position.y = -(_i * 180) + position.y;
+            object.position.y = -(_i2 * 180) + position.y;
             targets.table.push(object);
             index++;
         }
@@ -1767,12 +1765,12 @@ function showPrizeList(currentPrizeIndex) {
     if (currentPrize.type === defaultType) {
         currentPrize.count === '不限制';
     }
-    var htmlCode = '<div class="prize-mess">\u6B63\u5728\u62BD\u53D6<label id="prizeType" class="prize-shine">' + (currentPrize.type + '等奖') + '</label><label id="prizeText" class="prize-shine">' + currentPrize['title'] + '</label>\uFF0C\u5269\u4F59<label id="prizeLeft" class="prize-shine">' + currentPrize['count'] + '</label>\u4E2A</div><ul class="prize-list">';
+    var htmlCode = '<div class="prize-mess">\u6B63\u5728\u62BD\u53D6<label id="prizeType" class="prize-shine">' + currentPrize.type + '</label><label id="prizeText" class="prize-shine">' + currentPrize['title'] + '</label>\uFF0C\u5269\u4F59<label id="prizeLeft" class="prize-shine">' + currentPrize['count'] + '</label>\u4E2A</div><ul class="prize-list">';
     prizes.forEach(function (item) {
         if (item.type === defaultType) {
             return true;
         }
-        htmlCode += '<li id="prize-item-' + item.type + '" class="prize-item ' + (item.type == currentPrize.type ? "shine" : '') + '">\n                        <div class="prize-img">\n                            <img src="' + item.img + '" alt="' + item.title + '">\n                        </div>\n                        <div class="prize-text">\n                            <h5 class="prize-title">' + item.type + '\u7B49\u5956 ' + item.title + '</h5>\n                            <div class="prize-count">\n                                <div class="progress">\n                                    <div id="prize-bar-' + item.type + '" class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 100%;">\n                                    </div>\n                                </div>\n                                <div id="prize-count-' + item.type + '" class="prize-count-left">\n                                    ' + (item.count + '/' + item.count) + '\n                                </div>\n                            </div>\n                        </div>\n                    </li>';
+        htmlCode += '<li id="prize-item-' + item.type + '" class="prize-item ' + (item.type == currentPrize.type ? "shine" : '') + '">\n                        <div class="prize-img">\n                            <img src="' + item.img + '" alt="' + item.title + '">\n                        </div>\n                        <div class="prize-text">\n                            <h5 class="prize-title">' + item.type + ' ' + item.title + '</h5>\n                            <div class="prize-count">\n                                <div class="progress">\n                                    <div id="prize-bar-' + item.type + '" class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 100%;">\n                                    </div>\n                                </div>\n                                <div id="prize-count-' + item.type + '" class="prize-count-left">\n                                    ' + (item.count + '/' + item.count) + '\n                                </div>\n                            </div>\n                        </div>\n                    </li>';
     });
     htmlCode += '</ul>';
 
@@ -1822,7 +1820,7 @@ var setPrizeData = function () {
             lastBox.classList.remove('shine');
             lastBox.classList.add('done');
             elements.box && elements.box.classList.add('shine');
-            prizeElement.prizeType.textContent = currentPrize.type + '等奖';
+            prizeElement.prizeType.textContent = currentPrize.type;
             prizeElement.prizeText.textContent = currentPrize.title;
 
             lasetPrizeIndex = currentPrizeIndex;
