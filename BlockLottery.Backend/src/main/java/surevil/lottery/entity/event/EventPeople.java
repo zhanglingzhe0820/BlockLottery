@@ -1,12 +1,15 @@
 package surevil.lottery.entity.event;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
-@Embeddable
+@Entity
+@Table(name = "event_people")
 public class EventPeople {
-    @Column(name = "code")
-    private int code;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    @Column(name = "event_id")
+    private int eventId;
     @Column(name = "name")
     private String name;
     @Column(name = "phone")
@@ -19,20 +22,28 @@ public class EventPeople {
     public EventPeople() {
     }
 
-    public EventPeople(int code, String name, String phone, long timeStamp, String status) {
-        this.code = code;
+    public EventPeople(int eventId, String name, String phone, long timeStamp, String status) {
+        this.eventId = eventId;
         this.name = name;
         this.phone = phone;
         this.timeStamp = timeStamp;
         this.status = status;
     }
 
-    public int getCode() {
-        return code;
+    public int getId() {
+        return id;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
     }
 
     public String getName() {

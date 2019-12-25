@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import surevil.lottery.blservice.event.EventBlService;
+import surevil.lottery.exception.PutToBlockErrorException;
 import surevil.lottery.exception.SystemException;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
@@ -15,6 +16,7 @@ import surevil.lottery.response.Response;
 import surevil.lottery.response.SuccessResponse;
 import surevil.lottery.response.WrongResponse;
 import surevil.lottery.response.event.EventDetailResponse;
+import surevil.lottery.response.event.EventJoinSuccessResponse;
 import surevil.lottery.response.event.EventLoadResponse;
 import surevil.lottery.util.UserInfoUtil;
 
@@ -67,6 +69,25 @@ public class EventController {
         } catch (ThingIdDoesNotExistException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getResponse(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @ApiOperation(value = "参加抽奖", notes = "参加抽奖")
+    @RequestMapping(value = "event/join/{id}", method = RequestMethod.GET)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = EventJoinSuccessResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> joinEvent(@PathVariable(name = "id") int id, @RequestParam(name = "phone") String phone, @RequestParam(name = "name") String name) {
+        try {
+            return new ResponseEntity<>(eventBlService.joinEvent(id, phone, name), HttpStatus.OK);
+        } catch (ThingIdDoesNotExistException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getResponse(), HttpStatus.NOT_FOUND);
+        } catch (PutToBlockErrorException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

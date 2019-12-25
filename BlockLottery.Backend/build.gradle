@@ -51,6 +51,8 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.4.0'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.4.0'
     compile group: 'io.springfox', name: 'springfox-spi', version: '2.4.0'
+    compile 'cn.com.antcloud.api:antcloud-api-sdk:3.4.0'
+    compile 'cn.com.antcloud.api:antcloud-api-twc:1.1.25'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile group: 'junit', name: 'junit', version: '4.12'

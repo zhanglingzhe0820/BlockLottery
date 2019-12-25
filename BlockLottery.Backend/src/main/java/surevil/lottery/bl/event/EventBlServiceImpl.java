@@ -5,23 +5,19 @@ import org.springframework.stereotype.Service;
 import surevil.lottery.blservice.event.EventBlService;
 import surevil.lottery.blservice.upload.ImageUploadBlService;
 import surevil.lottery.dao.event.EventDao;
+import surevil.lottery.dao.event.EventPeopleDao;
 import surevil.lottery.entity.event.Event;
 import surevil.lottery.entity.event.EventPeople;
 import surevil.lottery.entity.event.Reward;
+import surevil.lottery.exception.PutToBlockErrorException;
 import surevil.lottery.exception.SystemException;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
 import surevil.lottery.parameters.event.RewardItem;
 import surevil.lottery.response.SuccessResponse;
-import surevil.lottery.response.event.EventDetailResponse;
-import surevil.lottery.response.event.EventItem;
-import surevil.lottery.response.event.EventLoadResponse;
-import surevil.lottery.response.event.PeopleItem;
+import surevil.lottery.response.event.*;
 import surevil.lottery.response.upload.UploadImageResponse;
-import surevil.lottery.util.FormatDateTime;
-import surevil.lottery.util.PathUtil;
-import surevil.lottery.util.QrCodeUtil;
-import surevil.lottery.util.UserInfoUtil;
+import surevil.lottery.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +29,13 @@ public class EventBlServiceImpl implements EventBlService {
     private final static String LOTTERY_BASE_URL = "http://localhost:3000/?eventId=";
     private final EventDao eventDao;
     private final ImageUploadBlService imageUploadBlService;
+    private final EventPeopleDao eventPeopleDao;
 
     @Autowired
-    public EventBlServiceImpl(EventDao eventDao, ImageUploadBlService imageUploadBlService) {
+    public EventBlServiceImpl(EventDao eventDao, ImageUploadBlService imageUploadBlService, EventPeopleDao eventPeopleDao) {
         this.eventDao = eventDao;
         this.imageUploadBlService = imageUploadBlService;
+        this.eventPeopleDao = eventPeopleDao;
     }
 
     @Override
@@ -47,7 +45,7 @@ public class EventBlServiceImpl implements EventBlService {
         for (RewardItem rewardItem : rewardItems) {
             rewards.add(new Reward(rewardItem.getLevel(), rewardItem.getName(), rewardItem.getNum(), rewardItem.getCount()));
         }
-        Event event = new Event(eventAddParameters.getName(), "", UserInfoUtil.getUsername(), rewards, new ArrayList<>());
+        Event event = new Event(eventAddParameters.getName(), "", UserInfoUtil.getUsername(), rewards);
         event = eventDao.save(event);
         String qrcodeSourceUrl = JOIN_BASE_URL + event.getId();
         String filename = FormatDateTime.currentDateString();
@@ -64,7 +62,8 @@ public class EventBlServiceImpl implements EventBlService {
         List<EventItem> eventItems = new ArrayList<>();
         for (Event event : events) {
             int winners = 0;
-            for (EventPeople eventPeople : event.getPeopleItems()) {
+            List<EventPeople> eventPeopleList = eventPeopleDao.findAllByEventId(event.getId());
+            for (EventPeople eventPeople : eventPeopleList) {
                 if (!eventPeople.getStatus().equals("待开奖") && !eventPeople.getStatus().equals("未中奖")) {
                     winners++;
                 }
@@ -89,13 +88,26 @@ public class EventBlServiceImpl implements EventBlService {
                 rewardItems.add(rewardItem);
             }
             List<PeopleItem> peopleItems = new ArrayList<>();
-            for (EventPeople eventPeople : event.getPeopleItems()) {
-                PeopleItem peopleItem = new PeopleItem(eventPeople.getCode(), eventPeople.getName(), eventPeople.getPhone(), eventPeople.getTimeStamp(), eventPeople.getStatus());
+            List<EventPeople> eventPeopleList = eventPeopleDao.findAllByEventId(event.getId());
+            for (EventPeople eventPeople : eventPeopleList) {
+                PeopleItem peopleItem = new PeopleItem(eventPeople.getId(), eventPeople.getName(), eventPeople.getPhone(), eventPeople.getTimeStamp(), eventPeople.getStatus());
                 peopleItems.add(peopleItem);
             }
             return new EventDetailResponse(event.getId(), event.getName(), rewardItems, event.getQrcodeUrl(), LOTTERY_BASE_URL + event.getId(), peopleItems);
         } else {
             throw new ThingIdDoesNotExistException();
         }
+    }
+
+    @Override
+    public EventJoinSuccessResponse joinEvent(int id, String phone, String name) throws PutToBlockErrorException {
+        EventPeople eventPeople = new EventPeople(id, name, phone, System.currentTimeMillis(), "待开奖");
+        eventPeople = eventPeopleDao.save(eventPeople);
+        Transaction transaction = AntBlockSaveUtil.saveAndGetTransaction("join", getEventPeopleStr(eventPeople));
+        return new EventJoinSuccessResponse(eventPeople.getId(), transaction.getTransactionId(), transaction.getTxHash());
+    }
+
+    private String getEventPeopleStr(EventPeople eventPeople) {
+        return eventPeople.getEventId() + "-" + eventPeople.getId() + "-" + eventPeople.getName() + eventPeople.getPhone();
     }
 }

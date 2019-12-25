@@ -1,8 +1,5 @@
 package surevil.lottery.entity.event;
 
-import surevil.lottery.parameters.event.RewardItem;
-import surevil.lottery.response.event.PeopleItem;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -21,19 +18,15 @@ public class Event {
     @Column(name = "rewardItemList")
     @ElementCollection(targetClass = Reward.class)
     private List<Reward> rewardItemList;
-    @Column(name = "peopleItems")
-    @ElementCollection(targetClass = EventPeople.class)
-    private List<EventPeople> peopleItems;
 
     public Event() {
     }
 
-    public Event(String name, String qrcodeUrl, String username, List<Reward> rewardItemList, List<EventPeople> peopleItems) {
+    public Event(String name, String qrcodeUrl, String username, List<Reward> rewardItemList) {
         this.name = name;
         this.qrcodeUrl = qrcodeUrl;
         this.username = username;
         this.rewardItemList = rewardItemList;
-        this.peopleItems = peopleItems;
     }
 
     public int getId() {
@@ -74,13 +67,5 @@ public class Event {
 
     public void setRewardItemList(List<Reward> rewardItemList) {
         this.rewardItemList = rewardItemList;
-    }
-
-    public List<EventPeople> getPeopleItems() {
-        return peopleItems;
-    }
-
-    public void setPeopleItems(List<EventPeople> peopleItems) {
-        this.peopleItems = peopleItems;
     }
 }

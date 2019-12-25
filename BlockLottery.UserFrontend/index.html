@@ -23,7 +23,7 @@
             <div class='icon'>
                 <img src='img/lock_icon_copy.png'>
             </div>
-            <input placeholder='手机号码' type='password'>
+            <input id="phone" placeholder='手机号码' type='text'>
             <div class='validation'>
                 <img src='img/tick.png'>
             </div>
@@ -32,7 +32,7 @@
             <div class='icon'>
                 <img src='img/user_icon_copy.png'>
             </div>
-            <input placeholder='姓名' type='text'>
+            <input id="name" placeholder='姓名' type='text'>
             <div class='validation'>
                 <img src='img/tick.png'>
             </div>
@@ -43,11 +43,11 @@
         </div>
     </div>
     <div class='success'>
-        <h1 style="margin-bottom: 20px">001</h1>
+        <h1 id="code" style="margin-bottom: 20px">001</h1>
         <h3>TransactionId</h3>
-        <p style="text-align: center">0x12321412421421412312412312</p>
+        <p id="transactionId" style="text-align: center">0x12321412421421412312412312</p>
         <h3>TxHash</h3>
-        <p style="text-align: center">0x123223141241412421421412312412312</p>
+        <p id="txHash" style="text-align: center;word-break:break-all;">0x123223141241412421421412312412312</p>
     </div>
     <div class='disclaimer'>
         <p>您的手机号码将被用于获奖信息发放，请正确填写</p>
@@ -62,12 +62,56 @@
 <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script>
+    function getQueryVariable(variable) {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split("=");
+            if (pair[0] == variable) {
+                return pair[1];
+            }
+        }
+        return 17;
+    }
+
     $('input[type="submit"]').click(function () {
         $('.login').addClass('test');
         setTimeout(function () {
             $('.login').addClass('testtwo');
         }, 300);
         setTimeout(function () {
+            let phone = document.getElementById("phone").value;
+            let name = document.getElementById("name").value;
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8888/event/join/' + getQueryVariable('eventId') + "?phone=" + phone + "&name=" + name,
+                complete: function (res) {
+                    if (res.status === 200) {
+                        let json = JSON.parse(res.responseText.trim());
+                        document.getElementById("code").innerText = json.code;
+                        document.getElementById("transactionId").innerText = json.transactionId;
+                        document.getElementById("txHash").innerText = json.txHash;
+                    } else {
+                        document.getElementById("code").innerText = "请求错误";
+                        document.getElementById("transactionId").innerText = "请扫码后重试";
+                        document.getElementById("txHash").innerText = "请扫码后重试";
+                    }
+                    $('.authent').show().animate({right: 90}, {
+                        easing: 'easeOutQuint',
+                        duration: 600,
+                        queue: false
+                    });
+                    $('.authent').animate({opacity: 0}, {
+                        duration: 200,
+                        queue: false
+                    }).addClass('visible');
+                    $('.login').removeClass('testtwo');
+                    $('.login').removeClass('test');
+                    $('.login div').fadeOut(123);
+                    $('.success').fadeIn();
+                },
+                dataType: "json"
+            });
             $('.authent').show().animate({right: -320}, {
                 easing: 'easeOutQuint',
                 duration: 600,
@@ -78,25 +122,6 @@
                 queue: false
             }).addClass('visible');
         }, 500);
-        setTimeout(function () {
-            $('.authent').show().animate({right: 90}, {
-                easing: 'easeOutQuint',
-                duration: 600,
-                queue: false
-            });
-            $('.authent').animate({opacity: 0}, {
-                duration: 200,
-                queue: false
-            }).addClass('visible');
-            $('.login').removeClass('testtwo');
-        }, 2500);
-        setTimeout(function () {
-            $('.login').removeClass('test');
-            $('.login div').fadeOut(123);
-        }, 2800);
-        setTimeout(function () {
-            $('.success').fadeIn();
-        }, 3200);
     });
     $('input[type="text"],input[type="password"]').focus(function () {
         $(this).prev().animate({'opacity': '1'}, 200);
@@ -126,5 +151,4 @@
 </script>
 </body>
 </html>
-<a href="http://www.bootstrapmb.com" style="display:none">bootstrapmb</a>
 
