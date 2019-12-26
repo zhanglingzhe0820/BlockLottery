@@ -8,17 +8,18 @@ import {api} from "../../services/api/ApiProvider";
 
 @withRouter @Form.create()
 class LoginForm extends React.Component {
+    constructor(props) {
+        console.log("constructor")
+        super(props)
+        this.createCode()
+    }
+
     state = {
         focusItem: -1,   //保存当前聚焦的input
         code: ''         //验证码
     }
 
     componentWillMount() {
-    }
-
-    componentDidMount() {
-        console.log("componentDidMount")
-        this.createCode()
     }
 
     /**
