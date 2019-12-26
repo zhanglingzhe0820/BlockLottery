@@ -72,7 +72,7 @@ class DetailPage extends React.Component {
         ]
     };
 
-    componentDidMount = async () => {
+    componentWillReceiveProps = async (nextProps, nextContext) => {
         this.setState({
             loading: true
         });

@@ -34,7 +34,7 @@ class ListPage extends React.Component {
         data: [],
     }
 
-    componentDidMount = async () => {
+    componentWillReceiveProps = async (nextProps, nextContext) => {
         try {
             let res = await api.eventService.loadEvents()
             this.setState({
