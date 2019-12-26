@@ -22,14 +22,14 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
-        if (isLogin) {
-            this.props.history.go(1)     //当浏览器用后退按钮回到登录页时，判断登录页是否登录，是登录就重定向上个页面
-        }
-        this.initPage()
     }
 
     componentWillUnmount() {
+        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
+        if (isLogin) {
+            this.props.history.go('/home')
+        }
+        this.initPage()
         this.particle && this.particle.destory()
         notification.destroy()
     }
