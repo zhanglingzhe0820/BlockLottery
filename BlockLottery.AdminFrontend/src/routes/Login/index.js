@@ -22,10 +22,6 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
-        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
-        if (isLogin) {
-            this.props.history.push('/home')
-        }
     }
 
     componentWillUnmount() {
@@ -72,6 +68,10 @@ class Login extends React.Component {
     }
 
     render() {
+        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
+        if (isLogin) {
+            this.props.history.push('/home')
+        }
         const {showBox, loading} = this.state
         return (
             <div id='login-page'>
