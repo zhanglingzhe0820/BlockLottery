@@ -9,7 +9,7 @@ import {
     resetPrize
 } from './prizeList';
 
-const BACKEND_URL = "http://localhost:8888/";
+const BACKEND_URL = "http://139.199.222.72:5000/";
 const ROTATE_TIME = 3000;
 const BASE_HEIGHT = 1080;
 const ROW_COUNT = 7;

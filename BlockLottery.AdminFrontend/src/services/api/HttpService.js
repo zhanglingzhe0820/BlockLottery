@@ -10,9 +10,9 @@ export const HttpMethod = {
     PUT: 'PUT'
 };
 
-export const API_URL = "http://localhost:8888";
+// export const API_URL = "http://localhost:8888";
 
-// export const API_URL = "http://47.105.229.2:8080";
+export const API_URL = "http://139.199.222.72:3000";
 
 export class HttpService {
     _instance = Axios.create({

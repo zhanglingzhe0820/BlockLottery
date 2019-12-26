@@ -26,8 +26,8 @@ import java.util.Optional;
 
 @Service
 public class EventBlServiceImpl implements EventBlService {
-    private final static String JOIN_BASE_URL = "file:///Users/zhanglingzhe/Documents/private/BlockLottery/BlockLottery.UserFrontend/index.html?eventId=";
-    private final static String LOTTERY_BASE_URL = "http://localhost:3000/?eventId=";
+    private final static String JOIN_BASE_URL = "http://139.199.222.72:8080?eventId=";
+    private final static String LOTTERY_BASE_URL = "http://139.199.222.72:3000/?eventId=";
     private final EventDao eventDao;
     private final ImageUploadBlService imageUploadBlService;
     private final EventPeopleDao eventPeopleDao;
