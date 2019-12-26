@@ -46,8 +46,8 @@ class Login extends React.Component {
             })
         }).then(() => {
             //为什么写在then里？id为backgroundBox的DOM元素是在loading为false时才有，而上面的setState可能是异步的，必须等到setState执行完成后才去获取dom
-            // this.particle = new BGParticle('backgroundBox')
-            // this.particle.init()
+            this.particle = new BGParticle('backgroundBox')
+            this.particle.init()
         })
     }
     //切换showbox
@@ -72,6 +72,10 @@ class Login extends React.Component {
     }
 
     render() {
+        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
+        if (isLogin) {
+            this.props.history.push('/home')
+        }
         const {showBox, loading} = this.state
         return (
             <div id='login-page'>

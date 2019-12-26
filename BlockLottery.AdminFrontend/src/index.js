@@ -4,19 +4,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import {HashRouter} from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 import {Provider} from 'mobx-react'
 import {LocaleProvider} from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN'
 
 //打包时，用的HashRouter并加上了basename，因为放在服务器的二级目录下
 ReactDOM.render(
-    <HashRouter>
+    <BrowserRouter>
         <LocaleProvider locale={zh_CN}>
             <Provider>
                 <App/>
             </Provider>
         </LocaleProvider>
-    </HashRouter>,
+    </BrowserRouter>,
     document.getElementById('root'));
 registerServiceWorker();
