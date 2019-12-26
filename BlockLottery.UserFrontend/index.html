@@ -84,7 +84,7 @@
             let name = document.getElementById("name").value;
             $.ajax({
                 type: 'GET',
-                url: 'http://localhost:8888/event/join/' + getQueryVariable('eventId') + "?phone=" + phone + "&name=" + name,
+                url: 'http://139.199.222.72:5000/event/join/' + getQueryVariable('eventId') + "?phone=" + phone + "&name=" + name,
                 complete: function (res) {
                     if (res.status === 200) {
                         let json = JSON.parse(res.responseText.trim());
