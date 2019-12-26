@@ -14,7 +14,6 @@ class LoginForm extends React.Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        this.createCode()
     }
 
     /**
@@ -91,6 +90,7 @@ class LoginForm extends React.Component {
     }
 
     render() {
+        this.createCode()
         const {getFieldDecorator, getFieldError} = this.props.form
         const {focusItem, code} = this.state
         return (
