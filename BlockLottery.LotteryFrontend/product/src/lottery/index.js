@@ -77,8 +77,15 @@ function initAll() {
     window.AJAX({
         url: BACKEND_URL + 'event/' + eventId,
         success(data) {
-            let prizes = [];
-            let eachCount = [];
+            let prizes = [
+                {
+                    type: '一等奖',
+                    count: 100,
+                    title: '特别奖',
+                    img: '../img/huawei.png'
+                }
+            ];
+            let eachCount = [0];
             for (let i = 0; i < data.rewardItemList.length; i++) {
                 let rewardItem = data.rewardItemList[i];
                 let prize = {
@@ -98,20 +105,33 @@ function initAll() {
 
             TOTAL_CARDS = ROW_COUNT * COLUMN_COUNT;
 
+            let users = [];
             let leftUsers = [];
+            let luckyUsers = {};
             for (let i = 0; i < data.peopleItems.length; i++) {
                 let peopleItem = data.peopleItems[i];
-                let user = [peopleItem.code, peopleItem.name, peopleItem.phone.substr(peopleItem.phone.length - 6)];
-                leftUsers = leftUsers.concat(user);
+                let user = new Array([peopleItem.code, peopleItem.name, peopleItem.phone.substr(peopleItem.phone.length - 6)]);
+                users = users.concat(user);
+                if (peopleItem.status.indexOf('待开奖') < 0 && peopleItem.status.indexOf('未中奖') < 0) {
+                    let luckyUserTuple = [];
+                    if (peopleItem.status in luckyUsers) {
+                        luckyUserTuple = luckyUsers[peopleItem.status];
+                    }
+                    luckyUserTuple = luckyUserTuple.concat(user);
+                    luckyUsers[peopleItem.status] = luckyUserTuple;
+                } else {
+                    leftUsers = leftUsers.concat(user);
+                }
             }
 
             // 读取当前已设置的抽奖结果
-            basicData.users = data.leftUsers;
-            basicData.luckyUsers = data.luckyData;
+            basicData.users = users;
+            basicData.leftUsers = leftUsers;
+            basicData.luckyUsers = luckyUsers;
 
             let prizeIndex = basicData.prizes.length - 1;
             for (; prizeIndex > -1; prizeIndex--) {
-                if (data.luckyData[prizeIndex] && data.luckyData[prizeIndex].length >= basicData.prizes[prizeIndex].count) {
+                if (luckyUsers[prizeIndex] && luckyUsers[prizeIndex].length >= basicData.prizes[prizeIndex].count) {
                     continue;
                 }
                 currentPrizeIndex = prizeIndex;
@@ -122,13 +142,14 @@ function initAll() {
             showPrizeList(currentPrizeIndex);
             let curLucks = basicData.luckyUsers[currentPrize.type];
             setPrizeData(currentPrizeIndex, curLucks ? curLucks.length : 0, true);
+
+            initCards();
+            // startMaoPao();
+            animate();
+            shineCard();
         }
     });
 
-    initCards();
-    // startMaoPao();
-    animate();
-    shineCard();
 }
 
 function initCards() {
@@ -605,7 +626,9 @@ function saveData() {
 
 function changePrize() {
     let luckys = basicData.luckyUsers[currentPrize.type];
-    let luckyCount = (luckys ? luckys.length : 0) + EACH_COUNT[currentPrizeIndex];
+    let luckyCount = luckys.length + EACH_COUNT[currentPrizeIndex];
+    console.log(currentPrizeIndex)
+    console.log(EACH_COUNT)
     // 修改左侧prize的数目和百分比
     setPrizeData(currentPrizeIndex, luckyCount);
 }
