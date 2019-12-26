@@ -13,7 +13,7 @@ class LoginForm extends React.Component {
         code: ''         //验证码
     }
 
-    componentDidMount() {
+    componentWillReceiveProps(nextProps, nextContext) {
         this.createCode()
     }
 

@@ -21,7 +21,7 @@ class Login extends React.Component {
         loading2: false,
     }
 
-    componentDidMount() {
+    componentWillReceiveProps(nextProps, nextContext) {
         const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
         if (isLogin) {
             this.props.history.push('/home')
