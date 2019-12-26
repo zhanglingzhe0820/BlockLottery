@@ -1,4 +1,4 @@
 cd ..
 npm start
 cd dist
-node ../../server/index.js 48888
+sudo nohup node ../../server/index.js 3000 &
