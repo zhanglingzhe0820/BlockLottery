@@ -22,13 +22,13 @@ class Login extends React.Component {
     }
 
     componentDidMount() {
+        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
+        if (isLogin) {
+            this.props.history.push('/home')
+        }
     }
 
     componentWillUnmount() {
-        const isLogin = localStorage.getItem('token') && localStorage.getItem('token').length > 0;
-        if (isLogin) {
-            this.props.history.go('/home')
-        }
         this.initPage()
         this.particle && this.particle.destory()
         notification.destroy()

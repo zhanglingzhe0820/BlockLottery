@@ -14,9 +14,6 @@ class LoginForm extends React.Component {
     }
 
     componentWillMount() {
-        if (localStorage.getItem('token') && localStorage.getItem('token').length > 0) {
-            this.props.history.push('/home')
-        }
     }
 
     componentDidMount() {
