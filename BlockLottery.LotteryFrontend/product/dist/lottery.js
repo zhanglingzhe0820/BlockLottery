@@ -592,6 +592,7 @@ currentPrizeIndex = void 0,
 
 // 正在抽奖
 isLotting = false,
+    eventId = 17,
     currentLuckys = [];
 
 initAll();
@@ -612,8 +613,9 @@ function getQueryVariable(variable) {
  * 初始化所有DOM
  */
 function initAll() {
-    var eventId = getQueryVariable("eventId");
+    eventId = getQueryVariable("eventId");
     window.AJAX({
+        type: 'GET',
         url: BACKEND_URL + 'event/' + eventId,
         success: function success(data) {
             var prizes = [{
@@ -796,30 +798,14 @@ function bindEvent() {
                 rotate = true;
                 switchScreen('lottery');
                 break;
-            // 重置
-            case 'reset':
-                var doREset = window.confirm('是否确认重置数据，重置后，当前已抽的奖项全部清空？');
-                if (!doREset) {
-                    return;
-                }
-                (0, _prizeList.addQipao)('重置所有数据，重新抽奖');
-                addHighlight();
-                resetCard();
-                // 重置所有数据
-                currentLuckys = [];
-                basicData.leftUsers = Object.assign([], basicData.users);
-                basicData.luckyUsers = {};
-                currentPrizeIndex = basicData.prizes.length - 1;
-                currentPrize = basicData.prizes[currentPrizeIndex];
-
-                (0, _prizeList.resetPrize)(currentPrizeIndex);
-                reset();
-                switchScreen('enter');
-                break;
             // 抽奖
             case 'lottery':
                 setLotteryStatus(true);
-                // 每次抽奖前先保存上一次的抽奖数据
+                if (!currentPrize) {
+                    //若奖品抽完
+                    (0, _prizeList.addQipao)('\u5956\u54C1\u5DF2\u7ECF\u62BD\u5B8C\u5566\uFF0C\u4E0B\u6B21\u518D\u6765\u5427~');
+                    return;
+                }
                 saveData();
                 //更新剩余抽奖数目的数据显示
                 changePrize();
@@ -829,37 +815,34 @@ function bindEvent() {
                 });
                 (0, _prizeList.addQipao)('\u6B63\u5728\u62BD\u53D6[' + currentPrize.title + '],\u8C03\u6574\u597D\u59FF\u52BF');
                 break;
-            // 重新抽奖
-            case 'reLottery':
-                if (currentLuckys.length === 0) {
-                    (0, _prizeList.addQipao)('\u5F53\u524D\u8FD8\u6CA1\u6709\u62BD\u5956\uFF0C\u65E0\u6CD5\u91CD\u65B0\u62BD\u53D6\u5594~~');
-                    return;
-                }
-                setErrorData(currentLuckys);
-                (0, _prizeList.addQipao)('\u91CD\u65B0\u62BD\u53D6[' + currentPrize.title + '],\u505A\u597D\u51C6\u5907');
-                setLotteryStatus(true);
-                // 重新抽奖则直接进行抽取，不对上一次的抽奖数据进行保存
-                // 抽奖
-                resetCard().then(function (res) {
-                    // 抽奖
-                    lottery();
-                });
-                break;
-            // 导出抽奖结果
-            case 'save':
-                saveData().then(function (res) {
-                    resetCard().then(function (res) {
-                        // 将之前的记录置空
-                        currentLuckys = [];
-                    });
-                    exportData();
-                    (0, _prizeList.addQipao)('\u6570\u636E\u5DF2\u4FDD\u5B58\u5230EXCEL\u4E2D\u3002');
-                });
-                break;
         }
     });
 
     window.addEventListener('resize', onWindowResize, false);
+}
+
+function saveData() {
+    if (!currentPrize) {
+        //若奖品抽完，则不再记录数据，但是还是可以进行抽奖
+        return;
+    }
+
+    var type = currentPrize.type,
+        curLucky = basicData.luckyUsers[type] || [];
+
+    curLucky = curLucky.concat(currentLuckys);
+
+    basicData.luckyUsers[type] = curLucky;
+
+    if (currentPrize.count <= curLucky.length) {
+        currentPrizeIndex--;
+        if (currentPrizeIndex <= -1) {
+            currentPrizeIndex = 0;
+        }
+        currentPrize = basicData.prizes[currentPrizeIndex];
+    }
+
+    return Promise.resolve();
 }
 
 function switchScreen(type) {
@@ -1098,48 +1081,27 @@ function lottery() {
             }
             selectedCardIndex.push(cardIndex);
         }
+        var type = currentPrize.type;
+        var peopleCodes = [];
+        for (var _i3 = 0; _i3 < currentLuckys.length; _i3++) {
+            peopleCodes = peopleCodes.concat(currentLuckys[_i3][0]);
+        }
+        window.AJAX({
+            type: 'POST',
+            url: BACKEND_URL + 'event/lottery/' + eventId,
+            data: {
+                'level': type,
+                'codes': peopleCodes
+            }
+        });
 
-        // console.log(currentLuckys);
         selectCard();
     });
-}
-
-/**
- * 保存上一次的抽奖结果
- */
-function saveData() {
-    if (!currentPrize) {
-        //若奖品抽完，则不再记录数据，但是还是可以进行抽奖
-        return;
-    }
-
-    var type = currentPrize.type,
-        curLucky = basicData.luckyUsers[type] || [];
-
-    curLucky = curLucky.concat(currentLuckys);
-
-    basicData.luckyUsers[type] = curLucky;
-
-    if (currentPrize.count <= curLucky.length) {
-        currentPrizeIndex--;
-        if (currentPrizeIndex <= -1) {
-            currentPrizeIndex = 0;
-        }
-        currentPrize = basicData.prizes[currentPrizeIndex];
-    }
-
-    if (currentLuckys.length > 0) {
-        // todo by xc 添加数据保存机制，以免服务器挂掉数据丢失
-        return setData(type, currentLuckys);
-    }
-    return Promise.resolve();
 }
 
 function changePrize() {
     var luckys = basicData.luckyUsers[currentPrize.type];
     var luckyCount = luckys.length + EACH_COUNT[currentPrizeIndex];
-    console.log(currentPrizeIndex);
-    console.log(EACH_COUNT);
     // 修改左侧prize的数目和百分比
     (0, _prizeList.setPrizeData)(currentPrizeIndex, luckyCount);
 }
@@ -1194,61 +1156,6 @@ function shineCard() {
             changeCard(cardIndex, basicData.leftUsers[index]);
         }
     }, 500);
-}
-
-function setData(type, data) {
-    return new Promise(function (resolve, reject) {
-        window.AJAX({
-            url: '/saveData',
-            data: {
-                type: type,
-                data: data
-            },
-            success: function success() {
-                resolve();
-            },
-            error: function error() {
-                reject();
-            }
-        });
-    });
-}
-
-function setErrorData(data) {
-    return new Promise(function (resolve, reject) {
-        window.AJAX({
-            url: '/errorData',
-            data: {
-                data: data
-            },
-            success: function success() {
-                resolve();
-            },
-            error: function error() {
-                reject();
-            }
-        });
-    });
-}
-
-function exportData() {
-    window.AJAX({
-        url: '/export',
-        success: function success(data) {
-            if (data.type === 'success') {
-                location.href = data.url;
-            }
-        }
-    });
-}
-
-function reset() {
-    window.AJAX({
-        url: '/reset',
-        success: function success(data) {
-            console.log('重置成功');
-        }
-    });
 }
 
 var onload = window.onload;
@@ -1790,7 +1697,7 @@ function showPrizeList(currentPrizeIndex) {
         if (item.type === defaultType) {
             return true;
         }
-        htmlCode += '<li id="prize-item-' + item.type + '" class="prize-item ' + (item.type == currentPrize.type ? "shine" : '') + '">\n                        <div class="prize-img">\n                            <img src="' + item.img + '" alt="' + item.title + '">\n                        </div>\n                        <div class="prize-text">\n                            <h5 class="prize-title">' + item.type + ' ' + item.title + '</h5>\n                            <div class="prize-count">\n                                <div class="progress">\n                                    <div id="prize-bar-' + item.type + '" class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 100%;">\n                                    </div>\n                                </div>\n                                <div id="prize-count-' + item.type + '" class="prize-count-left">\n                                    ' + (item.count + '/' + item.count) + '\n                                </div>\n                            </div>\n                        </div>\n                    </li>';
+        htmlCode += '<li id="prize-item-' + item.type + '" class="prize-item ' + (item.type == currentPrize.type ? "shine" : '') + '">\n                        <div class="prize-img">\n                        </div>\n                        <div class="prize-text">\n                            <h5 class="prize-title">' + item.type + ' ' + item.title + '</h5>\n                            <div class="prize-count">\n                                <div class="progress">\n                                    <div id="prize-bar-' + item.type + '" class="progress-bar progress-bar-danger progress-bar-striped active" style="width: 100%;">\n                                    </div>\n                                </div>\n                                <div id="prize-count-' + item.type + '" class="prize-count-left">\n                                    ' + (item.count + '/' + item.count) + '\n                                </div>\n                            </div>\n                        </div>\n                    </li>';
     });
     htmlCode += '</ul>';
 

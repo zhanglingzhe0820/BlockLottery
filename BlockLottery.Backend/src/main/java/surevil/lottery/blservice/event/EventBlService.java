@@ -4,6 +4,7 @@ import surevil.lottery.exception.PutToBlockErrorException;
 import surevil.lottery.exception.SystemException;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
+import surevil.lottery.parameters.event.RewardSetParameters;
 import surevil.lottery.response.SuccessResponse;
 import surevil.lottery.response.event.EventDetailResponse;
 import surevil.lottery.response.event.EventJoinSuccessResponse;
@@ -17,4 +18,6 @@ public interface EventBlService {
     EventDetailResponse getEventDetail(int id) throws ThingIdDoesNotExistException;
 
     EventJoinSuccessResponse joinEvent(int id, String phone, String name) throws ThingIdDoesNotExistException, PutToBlockErrorException;
+
+    SuccessResponse setLottery(int id, RewardSetParameters rewardSetParameters);
 }

@@ -12,6 +12,7 @@ import surevil.lottery.exception.PutToBlockErrorException;
 import surevil.lottery.exception.SystemException;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
+import surevil.lottery.parameters.event.RewardSetParameters;
 import surevil.lottery.response.Response;
 import surevil.lottery.response.SuccessResponse;
 import surevil.lottery.response.WrongResponse;
@@ -89,5 +90,16 @@ public class EventController {
             e.printStackTrace();
             return new ResponseEntity<>(e.getResponse(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @ApiOperation(value = "保存抽奖", notes = "保存抽奖")
+    @RequestMapping(value = "event/lottery/{id}", method = RequestMethod.POST)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = EventJoinSuccessResponse.class),
+            @ApiResponse(code = 401, message = "Unauthorized", response = WrongResponse.class),
+            @ApiResponse(code = 500, message = "Failure", response = WrongResponse.class)})
+    @ResponseBody
+    public ResponseEntity<Response> setLottery(@PathVariable(name = "id") int id, @RequestBody RewardSetParameters rewardSetParameters) {
+        return new ResponseEntity<>(eventBlService.setLottery(id, rewardSetParameters), HttpStatus.OK);
     }
 }

@@ -149,7 +149,6 @@ function showPrizeList(currentPrizeIndex) {
         }
         htmlCode += `<li id="prize-item-${item.type}" class="prize-item ${(item.type == currentPrize.type ? "shine": '')}">
                         <div class="prize-img">
-                            <img src="${item.img}" alt="${item.title}">
                         </div>
                         <div class="prize-text">
                             <h5 class="prize-title">${item.type} ${item.title}</h5>

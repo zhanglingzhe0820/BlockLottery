@@ -14,6 +14,7 @@ import surevil.lottery.exception.SystemException;
 import surevil.lottery.exception.ThingIdDoesNotExistException;
 import surevil.lottery.parameters.event.EventAddParameters;
 import surevil.lottery.parameters.event.RewardItem;
+import surevil.lottery.parameters.event.RewardSetParameters;
 import surevil.lottery.response.SuccessResponse;
 import surevil.lottery.response.event.*;
 import surevil.lottery.response.upload.UploadImageResponse;
@@ -105,6 +106,20 @@ public class EventBlServiceImpl implements EventBlService {
         eventPeople = eventPeopleDao.save(eventPeople);
         Transaction transaction = AntBlockSaveUtil.saveAndGetTransaction("join", getEventPeopleStr(eventPeople));
         return new EventJoinSuccessResponse(eventPeople.getId(), transaction.getTransactionId(), transaction.getTxHash());
+    }
+
+    @Override
+    public SuccessResponse setLottery(int id, RewardSetParameters rewardSetParameters) {
+        List<Integer> peopleCodes = rewardSetParameters.getCodes();
+        for (Integer peopleCode : peopleCodes) {
+            Optional<EventPeople> optionalEventPeople = eventPeopleDao.findById(peopleCode);
+            if (optionalEventPeople.isPresent()) {
+                EventPeople eventPeople = optionalEventPeople.get();
+                eventPeople.setStatus(rewardSetParameters.getLevel());
+                eventPeopleDao.save(eventPeople);
+            }
+        }
+        return new SuccessResponse("lottery success");
     }
 
     private String getEventPeopleStr(EventPeople eventPeople) {
