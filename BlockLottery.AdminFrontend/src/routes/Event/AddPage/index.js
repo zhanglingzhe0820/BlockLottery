@@ -43,7 +43,7 @@ class AddPage extends React.Component {
                     message.success('提交成功')
                     this.props.history.push("/home/event/list")
                 } catch (e) {
-                    message.success('提交失败，请重试')
+                    message.error('提交失败，请重试')
                 }
                 this.setState({
                     loading: false

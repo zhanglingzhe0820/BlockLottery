@@ -77,8 +77,7 @@ class LoginForm extends React.Component {
                     )
                     localStorage.setItem('token', res.token)
                     message.success('登录成功')
-                    const {from} = this.props.location.state || {from: {pathname: '/'}}
-                    this.props.history.push(from)
+                    this.props.history.push('/home')
                 } catch (e) {
                     message.error('用户名密码错误')
                 }
