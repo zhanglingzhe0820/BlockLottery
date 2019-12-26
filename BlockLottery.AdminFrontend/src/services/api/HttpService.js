@@ -12,7 +12,7 @@ export const HttpMethod = {
 
 // export const API_URL = "http://localhost:8888";
 
-export const API_URL = "http://139.199.222.72:3000";
+export const API_URL = "http://139.199.222.72:5000";
 
 export class HttpService {
     _instance = Axios.create({

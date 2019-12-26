@@ -52,6 +52,7 @@ class DetailPage extends React.Component {
             },
         ],
         qrcode: "https://test-1255617399.cos.ap-beijing.myqcloud.com/qrcode.jpg",
+        lottery: "https://test-1255617399.cos.ap-beijing.myqcloud.com/qrcode.jpg",
         loading: false,
         result: [
             {
@@ -94,7 +95,8 @@ class DetailPage extends React.Component {
                 name: res.name,
                 rewards: res.rewardItemList,
                 qrcode: res.qrcodeUrl,
-                result: peoples
+                result: peoples,
+                lottery: res.lotteryUrl,
             })
         } catch (e) {
             console.log(e)
@@ -147,7 +149,7 @@ class DetailPage extends React.Component {
             <div>
                 <CustomBreadcrumb arr={['活动', '详情']}/>
                 <Card bordered={false} className='card-item' title={"活动详情"}
-                      extra={<Button type={"primary"}>前往抽奖</Button>}>
+                      extra={<Button type={"primary"}><Link to={this.state.lottery}>前往抽奖</Link></Button>}>
                     <span>活动名：</span>
                     <span>{this.state.name}</span>
                 </Card>
