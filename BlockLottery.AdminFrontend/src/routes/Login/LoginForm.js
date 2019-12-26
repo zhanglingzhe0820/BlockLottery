@@ -13,10 +13,13 @@ class LoginForm extends React.Component {
         code: ''         //验证码
     }
 
-    componentDidMount() {
+    componentWillMount() {
         if (localStorage.getItem('token') && localStorage.getItem('token').length > 0) {
-            this.props.history.push('/')
+            this.props.history.push('/home')
         }
+    }
+
+    componentDidMount() {
         this.createCode()
     }
 
