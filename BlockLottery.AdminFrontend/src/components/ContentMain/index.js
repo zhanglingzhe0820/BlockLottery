@@ -1,8 +1,8 @@
 import React from 'react'
 import {withRouter, Switch, Redirect, Route} from 'react-router-dom'
 import LoadableComponent from '../../utils/LoadableComponent'
-import PrivateRoute from '../PrivateRoute'
 
+const Login = LoadableComponent(() => import('../../routes/Login/index'))
 const Home = LoadableComponent(() => import('../../routes/Home/index'))  //参数一定要是函数，否则不会懒加载，只会代码拆分
 
 const EventAddPage = LoadableComponent(() => import('../../routes/Event/AddPage'))
@@ -56,6 +56,7 @@ class ContentMain extends React.Component {
         return (
             <div style={{padding: 16, position: 'relative'}}>
                 <Switch>
+                    <Route exact path='/login' component={Login}/>
                     <Route exact path='/home' component={Home}/>
 
                     <Route exact path='/home/event/add' component={EventAddPage}/>

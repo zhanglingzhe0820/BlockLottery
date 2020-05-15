@@ -49,7 +49,7 @@ public class EventBlServiceImpl implements EventBlService {
         Event event = new Event(eventAddParameters.getName(), "", UserInfoUtil.getUsername(), rewards);
         event = eventDao.save(event);
         String qrcodeSourceUrl = JOIN_BASE_URL + event.getId();
-        String filename = FormatDateTime.currentDateString();
+        String filename = String.valueOf(System.currentTimeMillis());
         QrCodeUtil.createQrCode(qrcodeSourceUrl, PathUtil.getTmpPath(), filename);
         UploadImageResponse response = this.imageUploadBlService.uploadFiles(PathUtil.getTmpPath() + "/" + filename);
         event.setQrcodeUrl(response.getUrl());

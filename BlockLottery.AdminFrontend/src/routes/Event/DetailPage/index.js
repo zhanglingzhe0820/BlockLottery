@@ -72,7 +72,8 @@ class DetailPage extends React.Component {
         ]
     };
 
-    componentWillReceiveProps = async (nextProps, nextContext) => {
+    componentDidMount = async () => {
+        console.log("1231231212412412")
         this.setState({
             loading: true
         });
@@ -107,7 +108,8 @@ class DetailPage extends React.Component {
     }
 
     formatDate = (now) => {
-        const year = now.getYear();
+        now = new Date(now);
+        const year = now.getFullYear();
         const month = now.getMonth() + 1;
         const date = now.getDate();
         const hour = now.getHours();
@@ -149,7 +151,7 @@ class DetailPage extends React.Component {
             <div>
                 <CustomBreadcrumb arr={['活动', '详情']}/>
                 <Card bordered={false} className='card-item' title={"活动详情"}
-                      extra={<Button type={"primary"}><Link to={this.state.lottery}>前往抽奖</Link></Button>}>
+                      extra={<Button type={"primary"}><a href={this.state.lottery}>前往抽奖</a></Button>}>
                     <span>活动名：</span>
                     <span>{this.state.name}</span>
                 </Card>
